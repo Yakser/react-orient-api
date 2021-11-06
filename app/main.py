@@ -1,16 +1,18 @@
-from typing import Any
-from fastapi import FastAPI, Depends, HTTPException, File, UploadFile
+import base64
+
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from fastapi.middleware.cors import CORSMiddleware
-from . import schemas, models
-from app.database import engine, SessionLocal, get_db
+
+from app.database import engine, get_db
+
+from . import models
 from ._helpers import find_user_by_email
 from .api import news_router, users_router
 from .auth import AuthHandler
-from .schemas import LoginDetails, RegisterDetails, Base64File
-from requests import get
-import base64
+from .schemas import Base64File, LoginDetails, RegisterDetails
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -72,32 +74,6 @@ def login(auth_details: LoginDetails, db: Session = Depends(get_db)):
     return {'token': token}
 
 
-@app.get('/unprotected')
-def unprotected():
-    return {'hello': 'world'}
-
-
-@app.get('/protected')
-def protected(email=Depends(auth_handler.auth_wrapper)):
-    return {'email': email}
-
-
 @app.get('/')
 def index():
     return {'message': 'home page'}
-
-# @app.get('/news')
-# def get_news(db: Session = Depends(get_db)):
-#     news = db.query(models.News).all()
-#     return {'news': news}
-#
-#
-# @app.post('/news')
-# def add_news(request: schemas.NewsCreate, db: Session = Depends(get_db)):
-#     new_item = models.News(date=request.date, header=request.header, markup=request.markup)
-#     db.add(new_item)
-#     db.commit()
-#     db.refresh(new_item)
-#     return {'request': request}
-
-# curl --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MzU3NTM0MjQsImlhdCI6MTYzNTc1MzEyNCwic3ViIjoiMTIzIn0.umbDTeClHzv-wU5PPxKdFv1aHvibUSN40tWq0-EYt-o" localhost:8000/protected
