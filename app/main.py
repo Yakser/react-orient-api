@@ -77,3 +77,8 @@ def login(auth_details: LoginDetails, db: Session = Depends(get_db)):
 @app.get('/')
 def index():
     return {'message': 'home page'}
+
+
+@app.get('/verify')
+def verify(email=Depends(auth_handler.auth_wrapper)):
+    return {'message': 'ok'}
