@@ -76,7 +76,7 @@ def login(auth_details: LoginDetails, db: Session = Depends(get_db)):
 
 @app.get('/')
 def index():
-    return {'message': 'home page'}
+    return {'message': f"home page {environ.get('SECRET')}"}
 
 
 @app.get('/verify')
