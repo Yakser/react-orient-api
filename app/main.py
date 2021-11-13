@@ -22,7 +22,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 origins = [
     "http://localhost:3000",
-    "https://localhost:3000"
+    "https://localhost:3000",
+    "https://react-orient.herokuapp.com/"
 ]
 
 app.add_middleware(
