@@ -1,4 +1,5 @@
 import base64
+import os
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -78,7 +79,19 @@ def login(auth_details: LoginDetails, db: Session = Depends(get_db)):
 
 @app.get('/')
 def index():
-    return {'message': f"home page {environ.get('SECRET')}"}
+    return {'message': "home page"}
+
+
+@app.get('/files')
+def index():
+    folder = "./static/"
+    all_files = []
+   
+    for subdir, dirs, files in os.walk(folder):
+        if files:
+            all_files += [subdir + '/' + file for file in files]
+   
+    return {'files': all_files}
 
 
 @app.get('/verify')
